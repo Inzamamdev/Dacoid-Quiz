@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+
 export function Form({
   className,
   ...props
@@ -22,6 +24,8 @@ export function Form({
     email: "",
     password: "",
   });
+  const [error, setError] = useState([]);
+  const { toast } = useToast();
   const isSignup = location.pathname == "/";
   const handlePage = () => {
     navigate(isSignup ? "/login" : "/");
@@ -32,6 +36,31 @@ export function Form({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const endpoint = isSignup ? "signup" : "login";
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(Array.isArray(data.errors) ? data.errors : [data.error]);
+        return;
+      }
+      toast({ title: data.message });
+      navigate("/quiz");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   console.log(formData);
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -45,7 +74,7 @@ export function Form({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               {isSignup && (
                 <div className="grid gap-2">
@@ -55,7 +84,6 @@ export function Form({
                     name="username"
                     type="text"
                     placeholder="john123"
-                    required
                     onChange={handleFormData}
                     value={formData.username}
                   />
@@ -68,7 +96,6 @@ export function Form({
                   type="email"
                   name="email"
                   placeholder="m@example.com"
-                  required
                   onChange={handleFormData}
                   value={formData.email}
                 />
@@ -81,13 +108,20 @@ export function Form({
                   id="password"
                   type="password"
                   name="password"
-                  required
                   onChange={handleFormData}
                   value={formData.password}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <div>
+                {error &&
+                  error?.map((err, index) => (
+                    <p key={index} className="text-red-500">
+                      {err}
+                    </p>
+                  ))}
+              </div>
+              <Button type="submit" className="w-full cursor-pointer">
+                {isSignup ? "Signup" : "Login"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">

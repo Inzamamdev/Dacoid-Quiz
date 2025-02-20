@@ -1,12 +1,22 @@
 import express from "express";
 import connectDb from "./database.js";
 import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoute.js";
 import quizRouter from "./routes/quizRoute.js";
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 connectDb()
   .then(() => console.log("Connected to MongoDB"))

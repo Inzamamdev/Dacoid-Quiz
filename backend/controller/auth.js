@@ -4,7 +4,6 @@ import User from "../models/User.js";
 
 export const signup = async (req, res) => {
   try {
-    console.log("controller", req.body);
     const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });

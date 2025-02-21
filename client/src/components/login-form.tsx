@@ -32,7 +32,6 @@ export function Form({
   };
 
   const handleFormData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -50,18 +49,24 @@ export function Form({
         }
       );
       const data = await response.json();
-
+      console.log(data);
       if (!response.ok) {
-        setError(Array.isArray(data.errors) ? data.errors : [data.error]);
+        setError(
+          Array.isArray(data.errors)
+            ? data.errors
+            : [data.error || data.message]
+        );
         return;
       }
-      toast({ title: data.message });
+
       navigate("/quiz");
+      console.log("form navigate");
+      toast({ title: data.message });
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(formData);
+  console.log(error);
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

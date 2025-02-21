@@ -1,5 +1,4 @@
 import { ChevronUp, History, User2, LayoutDashboard } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,

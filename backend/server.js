@@ -15,6 +15,7 @@ app.use(
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
@@ -23,7 +24,7 @@ connectDb()
   .catch((err) => console.log("Failed to connect to MongoDB:", err));
 
 app.use("/api/auth", authRouter);
-app.use("/api/user", quizRouter);
+app.use("/api/quiz", quizRouter);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

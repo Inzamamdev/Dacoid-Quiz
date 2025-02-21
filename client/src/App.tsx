@@ -4,6 +4,7 @@ import { Toaster } from "./components/ui/toaster";
 import Quiz from "./pages/Quiz";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
+import QuizHistory from "./pages/History";
 function App() {
   return (
     <>
@@ -14,6 +15,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
 
           <Route path="/quiz" element={<Quiz />} />
+          <Route path="/history" element={<QuizHistory />} />
         </Routes>
       </Router>
     </>

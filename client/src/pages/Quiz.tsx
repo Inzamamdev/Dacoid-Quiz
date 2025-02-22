@@ -66,7 +66,8 @@ export default function Quiz() {
       setFeedback("❌ Incorrect!");
     }
     // Wait a short delay to show feedback then move on.
-    setTimeout(() => handleNextQuestion(), 1000);
+    const timer = setTimeout(() => handleNextQuestion(), 1000);
+    return () => clearTimeout(timer);
   };
 
   const handleNextQuestion = () => {

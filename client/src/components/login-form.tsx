@@ -18,6 +18,7 @@ export function Form({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const navigate = useNavigate();
+
   const location = useLocation();
   const [formData, setFormData] = useState({
     username: "",
@@ -26,6 +27,7 @@ export function Form({
   });
   const [error, setError] = useState([]);
   const { toast } = useToast();
+
   const isSignup = location.pathname == "/";
   const handlePage = () => {
     navigate(isSignup ? "/login" : "/");
@@ -49,7 +51,7 @@ export function Form({
         }
       );
       const data = await response.json();
-      console.log(data);
+
       if (!response.ok) {
         setError(
           Array.isArray(data.errors)
@@ -60,13 +62,13 @@ export function Form({
       }
 
       navigate("/quiz");
-      console.log("form navigate");
+
       toast({ title: data.message });
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(error);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

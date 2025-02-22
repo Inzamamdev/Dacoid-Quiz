@@ -16,7 +16,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 // Menu items.
 const items = [
   {
@@ -31,7 +33,59 @@ const items = [
   },
 ];
 
+type User = {
+  name: string;
+  id: string;
+};
+
 export function AppSidebar() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState<User | null>(null);
+
+  // Fetch user data on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/user`,
+          {
+            method: "GET",
+            credentials: "include", // Ensures cookies are sent
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUsername(data); // Assuming API returns { username: "JohnDoe" }
+        } else {
+          setUsername(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        setUsername(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/logout`,
+        {
+          method: "POST",
+          credentials: "include", // Ensures cookies are sent
+        }
+      );
+      const data = await response.json();
+      navigate("/login");
+      toast({ title: data.message });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Sidebar>
       <SidebarContent>
@@ -60,7 +114,7 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <User2 />
-
+                  {username?.name}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -68,7 +122,7 @@ export function AppSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

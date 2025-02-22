@@ -7,8 +7,6 @@ export const getQuiz = async (req, res) => {
       { $unset: { options: [] } }
     );
 
-    console.log("Update Result:", updateResult); // Log update result to check matched & modified counts
-
     // Fetch the updated documents
     const questions = await Quiz.find();
 
